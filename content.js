@@ -23,7 +23,18 @@ function sort_entries() {
 						
 			var nextRow = currentRow.next('tr').next('tr').next('tr');
 			
-			if (parseInt($('span', currentRow).text().split(" ")[0]) < parseInt($('span', nextRow).text().split(" ")[0])) {
+      var currentRowPoints = parseInt($('span', currentRow).text().split(" ")[0]);
+      var nextRowPoints = parseInt($('span', nextRow).text().split(" ")[0]);
+
+      if (isNaN(currentRowPoints)) {
+        currentRowPoints = 0;
+      }
+
+      if (isNaN(nextRowPoints)) {
+        nextRowPoints = 0;
+      }
+
+			if (currentRowPoints < nextRowPoints) {
 				moveDown(currentRow, nextRow);
 				swapped = true;
 			}
