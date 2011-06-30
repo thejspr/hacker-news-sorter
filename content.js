@@ -45,7 +45,7 @@ function sort_entries() {
 }
 
 // build html for search bar
-var search_html = '&nbsp;&nbsp;<input id="searchyc" size="30" type="text" placeholder="Search with searchYC.com"></input>';
+var search_html = '&nbsp;&nbsp;<input id="searchyc" size="30" type="text" placeholder="Search with hnsearch.com"></input>';
 search_html += '<button id="searchyc-button">Search</input>';
 
 $('span:first').append(search_html);
@@ -55,7 +55,7 @@ $('#searchyc-button').css('vertical-align', 'middle');
 $('#searchyc-button').click(function(){
   var query = $('#searchyc').val();
   query = encodeURIComponent(query);
-  window.location = 'http://searchyc.com/'+query;
+  window.location = 'http://www.hnsearch.com/search#request/all&q='+query;
 });
 
 // search on "enter" button event
