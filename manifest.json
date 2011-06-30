@@ -1,6 +1,6 @@
 {
   "name": "Hacker News Sorter",
-    "version": "1.6.0",
+    "version": "1.6.1",
     "description": "Sort posts by points, enables search and linkify's Hacker News.",
     "content_scripts": [
     {
