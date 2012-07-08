@@ -1,0 +1,12 @@
+#!/bin/bash
+
+yuicompressor -o content.min.js --type js content.js
+yuicompressor -o auto-link.min.js --type js auto-link.js
+
+echo "Minified"
+
+rm hackernews-sorter.zip
+
+zip hackernews-sorter.zip *.min.js background.html icon2.png manifest.json
+
+echo "Done."
