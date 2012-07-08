@@ -7,6 +7,6 @@ echo "Minified"
 
 rm hackernews-sorter.zip
 
-zip hackernews-sorter.zip *.min.js background.html icon2.png manifest.json README
+zip hackernews-sorter.zip *.min.js background.html icon2.png manifest.json
 
 echo "Done."
