@@ -3,26 +3,26 @@ function moveDown (currentElement, nextElement) {
 	var textElement	= currentElement.prev('tr');
 	currentElement.next('tr').remove();
 	var next = nextElement;
-	
+
 	currentElement.insertAfter(next);
 	textElement.insertAfter(next);
-	
+
 	textElement.before('<tr style="height: 5px"></tr>');
 }
 
 // initiate (bubble) sorting algorithm
-function sort_entries() {	 
+function sort_entries() {
     var swapped;
-   
+
    do {
 		var rows = $("td.subtext");
 		swapped = false;
-		
+
 		for (var j = 0; j < rows.length - 1; j++) {
 			var currentRow = $(rows[j]).parent();
-						
+
 			var nextRow = currentRow.next('tr').next('tr').next('tr');
-			
+
       var currentRowPoints = parseInt($('span', currentRow).text().split(" ")[0]);
       var nextRowPoints = parseInt($('span', nextRow).text().split(" ")[0]);
 
@@ -50,7 +50,6 @@ search_html += '<button id="searchyc-button">Search</input>';
 
 $('span:first').append(search_html);
 $('#searchyc,#searchyc-button').css('border', '0').css('padding', '0');
-$('#searchyc-button').css('vertical-align', 'middle');
 
 $('#searchyc-button').click(function(){
   var query = $('#searchyc').val();
