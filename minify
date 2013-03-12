@@ -1,3 +1,3 @@
 #!/bin/bash
-yui-compressor -o content.min.js --type js content.js
-yui-compressor -o auto-link.min.js --type js auto-link.js
+yuicompressor -o content.min.js --type js content.js
+yuicompressor -o auto-link.min.js --type js auto-link.js
