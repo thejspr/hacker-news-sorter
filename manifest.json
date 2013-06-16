@@ -1,20 +1,21 @@
 {
+  "manifest_version": 2,
   "name": "Hacker News Sorter",
-    "version": "1.6.4",
-    "description": "Sort posts by points, enables search and linkify's Hacker News.",
-    "content_scripts": [
+  "version": "1.6.5",
+  "description": "Sort posts by points, enables search and linkify's Hacker News.",
+  "content_scripts": [
     {
-      "matches": [
-        "*://news.ycombinator.com/*"
-        ],
-      "js": ["jquery-1.9.1.min.js", "content.min.js", "auto-link.min.js"]
-    }
-  ],
-    "icons": {
-      "48": "icon2.png"
-    },
-    "permissions": [
+    "matches": [
       "*://news.ycombinator.com/*"
-      ],
-    "background_page": "background.html"
+    ],
+    "js": ["jquery-1.9.1.min.js", "content.min.js", "auto-link.min.js"]
+  }
+  ],
+  "icons": {
+    "48": "icon2.png"
+  },
+  "permissions": [
+    "*://news.ycombinator.com/*"
+  ],
+  "background": "background.html"
 }
