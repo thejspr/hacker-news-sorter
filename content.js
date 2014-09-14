@@ -1,13 +1,13 @@
 // move post element down
 function moveDown (currentElement, nextElement) {
-	var textElement	= currentElement.prev('tr');
-	currentElement.next('tr').remove();
-	var next = nextElement;
+  var textElement = currentElement.prev('tr');
+  currentElement.next('tr').remove();
+  var next = nextElement;
 
-	currentElement.insertAfter(next);
-	textElement.insertAfter(next);
+  currentElement.insertAfter(next);
+  textElement.insertAfter(next);
 
-	textElement.before('<tr style="height: 5px"></tr>');
+  textElement.before('<tr style="height: 5px"></tr>');
 }
 
 // initiate (bubble) sorting algorithm
@@ -15,13 +15,13 @@ function sort_entries() {
     var swapped;
 
    do {
-		var rows = $("td.subtext");
-		swapped = false;
+    var rows = $("td.subtext");
+    swapped = false;
 
-		for (var j = 0; j < rows.length - 1; j++) {
-			var currentRow = $(rows[j]).parent();
+    for (var j = 0; j < rows.length - 1; j++) {
+      var currentRow = $(rows[j]).parent();
 
-			var nextRow = currentRow.next('tr').next('tr').next('tr');
+      var nextRow = currentRow.next('tr').next('tr').next('tr');
 
       var currentRowPoints = parseInt($('span', currentRow).text().split(" ")[0]);
       var nextRowPoints = parseInt($('span', nextRow).text().split(" ")[0]);
@@ -34,14 +34,19 @@ function sort_entries() {
         nextRowPoints = 0;
       }
 
-			if (currentRowPoints < nextRowPoints) {
-				moveDown(currentRow, nextRow);
-				swapped = true;
-			}
-		}
-	} while ( swapped === true );
+      if (currentRowPoints < nextRowPoints) {
+        moveDown(currentRow, nextRow);
+        swapped = true;
+      }
+    }
+  } while ( swapped === true );
 
   $('#sorter').css('opacity','0.4');
+}
+
+if (localStorage.keep_sorted == 1) {
+  $('#keep_sorted').attr('checked','checked');
+  sort_entries();
 }
 
 // build html for search bar
@@ -54,7 +59,7 @@ $('#searchyc,#searchyc-button').css('border', '0').css('padding', '0');
 $('#searchyc-button').click(function(){
   var query = $('#searchyc').val();
   query = encodeURIComponent(query);
-  window.location = 'http://www.hnsearch.com/search#request/all&q='+query;
+  window.location = '//hn.algolia.com/?q='+query;
 });
 
 // search on "enter" button event
@@ -69,11 +74,6 @@ var sort_html = '<div id="sorter" style="position:absolute;float:left;color:#000
 sort_html += '<span style="vertical-align:middle;"><input type="checkbox" id="keep_sorted"></span>Auto</div>';
 
 $('body').prepend(sort_html);
-
-if (localStorage.keep_sorted == 1) {
-  $('#keep_sorted').attr('checked','checked');
-  sort_entries();
-}
 
 // onClick listener for sort button and stay-sorted checkbox
 $('#keep_sorted').click(function(){
