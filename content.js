@@ -44,11 +44,6 @@ function sort_entries() {
   $('#sorter').css('opacity','0.4');
 }
 
-if (localStorage.keep_sorted == 1) {
-  $('#keep_sorted').attr('checked','checked');
-  sort_entries();
-}
-
 // build html for search bar
 var search_html = '&nbsp;&nbsp;<input id="searchyc" size="30" type="text" placeholder="Search with hnsearch.com"></input>';
 search_html += '<button id="searchyc-button">Search</input>';
@@ -88,3 +83,8 @@ $('#keep_sorted').click(function(){
 $('#sort_btn').click(function(){
     sort_entries();
 });
+
+if (localStorage.keep_sorted == 1) {
+  $('#keep_sorted').attr('checked','checked');
+  sort_entries();
+}
