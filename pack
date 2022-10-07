@@ -1,11 +1,7 @@
 #!/bin/bash
 
-./minify
-
-echo "Minified"
-
 rm -f hackernews-sorter.zip
 
-zip hackernews-sorter.zip *.min.js background.html icon2.png manifest.json
+zip hackernews-sorter.zip *.js background.html icon2.png manifest.json
 
 echo "Done."

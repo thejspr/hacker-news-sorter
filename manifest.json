@@ -1,14 +1,14 @@
 {
   "manifest_version": 2,
   "name": "Hacker News Sorter",
-  "version": "1.6.9",
+  "version": "1.7.0",
   "description": "Sort posts by points, enables search and linkify's Hacker News.",
   "content_scripts": [
     {
     "matches": [
       "*://news.ycombinator.com/*"
     ],
-    "js": ["jquery-2.1.1.min.js", "content.min.js", "auto-link.min.js"]
+    "js": ["jquery-3.6.1.min.js", "content.js", "auto-link.js"]
   }
   ],
   "icons": {
