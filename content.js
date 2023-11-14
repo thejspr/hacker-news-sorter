@@ -49,8 +49,8 @@ function sort_entries() {
 
 // build html for search bar
 var search_html =
-  '&nbsp;&nbsp;<input id="searchyc" size="30" type="text" placeholder="Search with hnsearch.com"></input>';
-search_html += '<button id="searchyc-button">Search</input>';
+  '&nbsp;&nbsp;<input id="searchyc" size="30" type="text" placeholder="Search with hnsearch.com"></input>' +
+  '<button id="searchyc-button">Search</input>';
 
 $("span:first").append(search_html);
 $("#searchyc,#searchyc-button").css("border", "0").css("padding", "0");
@@ -70,8 +70,7 @@ $("#searchyc").keyup(function (event) {
 
 // build html for sort button
 var sort_html =
-  '<div id="sorter" style="position:absolute;float:left;color:#000;font-size:85%;"><button id="sort_btn">Sort</button><br />';
-sort_html +=
+  '<div id="sorter" style="position:absolute;float:left;color:#000;font-size:85%;"><button id="sort_btn">Sort</button><br />' +
   '<span style="vertical-align:middle;"><input type="checkbox" id="keep_sorted"></span>Auto</div>';
 
 $(function(){
