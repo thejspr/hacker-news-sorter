@@ -1,84 +1,122 @@
-// move post element down
-function moveDown(currentElement, nextElement) {
-  var textElement = currentElement.prev("tr");
-  currentElement.next("tr").remove();
-  var next = nextElement;
+// Hacker News Sorter — sorts front-page posts by points, plus an Algolia search box.
+// Vanilla JS, no dependencies.
 
-  currentElement.insertAfter(next);
-  textElement.insertAfter(next);
-
-  textElement.before('<tr style="height: 5px"></tr>');
-}
-
-// initiate (bubble) sorting algorithm
-function sort_entries() {
-  var swapped;
-  var count = $("td.subtext").length;
-
-  do {
-    var rows = $("td.subtext");
-    swapped = false;
-
-    for (var j = 0; j < rows.length - 1; j++) {
-      var currentRow = $(rows[j]).parent();
-
-      var nextRow = currentRow.next("tr").next("tr").next("tr");
-
-      var currentRowPoints = parseInt(
-        $("span", currentRow).text().trim().split(" ")[0]
-      );
-      var nextRowPoints = parseInt($("span", nextRow).text().trim().split(" ")[0]);
-
-      if (isNaN(currentRowPoints)) {
-        currentRowPoints = 0;
+// Collect each story as a group of rows. On HN a story is three consecutive rows:
+//   tr.athing (title) -> tr containing td.subtext (score/comments) -> tr.spacer
+function collectPosts() {
+  var groups = [];
+  document.querySelectorAll(".athing").forEach(function (athing) {
+    var rows = [athing];
+    var score = 0;
+    var subtext = athing.nextElementSibling;
+    if (subtext && subtext.querySelector("td.subtext")) {
+      rows.push(subtext);
+      var scoreEl = subtext.querySelector(".score");
+      if (scoreEl) {
+        score = parseInt(scoreEl.textContent.trim(), 10) || 0;
       }
-
-      if (isNaN(nextRowPoints)) {
-        nextRowPoints = 0;
-      }
-
-      if (currentRowPoints < nextRowPoints) {
-        moveDown(currentRow, nextRow);
-        swapped = true;
+      var spacer = subtext.nextElementSibling;
+      if (spacer && spacer.classList.contains("spacer")) {
+        rows.push(spacer);
       }
     }
-  } while (count--);
-
-  $("#sorter").css("opacity", "0.4");
+    groups.push({ rows: rows, score: score });
+  });
+  return groups;
 }
 
-// build html for search bar
-var search_html =
-  '&nbsp;&nbsp;<input id="searchyc" size="30" type="text" placeholder="Search with hnsearch.com"></input>' +
-  '<button id="searchyc-button">Search</input>';
-
-$("span:first").append(search_html);
-$("#searchyc,#searchyc-button").css("border", "0").css("padding", "0");
-
-$("#searchyc-button").click(function () {
-  var query = $("#searchyc").val();
-  query = encodeURIComponent(query);
-  window.location = "//hn.algolia.com/?q=" + query;
-});
-
-// search on "enter" button event
-$("#searchyc").keyup(function (event) {
-  if (event.keyCode == 13) {
-    $("#searchyc-button").click();
+// Sort posts by points (descending) with a single DOM write.
+function sort_entries() {
+  var groups = collectPosts();
+  if (groups.length === 0) {
+    return;
   }
-});
 
-// build html for sort button
-var sort_html =
-  '<div id="sorter" style="position:absolute;float:left;color:#000;font-size:85%;"><button id="sort_btn">Sort</button><br />' +
-  '<span style="vertical-align:middle;"><input type="checkbox" id="keep_sorted"></span>Auto</div>';
+  // Anchor: the first trailing row (the "More" / morespace row) that is not part of
+  // any group. Capture it before we start moving nodes around.
+  var lastGroup = groups[groups.length - 1];
+  var lastRow = lastGroup.rows[lastGroup.rows.length - 1];
+  var anchor = lastRow.nextElementSibling;
+  var parent = groups[0].rows[0].parentNode;
 
-$(function(){
-  $("body").prepend(sort_html);
+  // Stable sort by score descending (explicit index tie-break keeps page order).
+  var sorted = groups
+    .map(function (g, i) {
+      return { g: g, i: i };
+    })
+    .sort(function (a, b) {
+      return b.g.score - a.g.score || a.i - b.i;
+    })
+    .map(function (x) {
+      return x.g;
+    });
 
-  // onClick listener for sort button and stay-sorted checkbox
-  $("#keep_sorted").click(function () {
-    if ($(this).is(":checked")) {
+  // Move the rows into a fragment in sorted order, then re-insert in one operation.
+  var fragment = document.createDocumentFragment();
+  sorted.forEach(function (g) {
+    g.rows.forEach(function (row) {
+      fragment.appendChild(row);
+    });
+  });
+  parent.insertBefore(fragment, anchor);
+
+  var sorter = document.getElementById("sorter");
+  if (sorter) {
+    sorter.style.opacity = "0.4";
+  }
+}
+
+// Add the hnsearch/Algolia search box to the first header span.
+function setupSearch() {
+  var firstSpan = document.querySelector("span");
+  if (!firstSpan) {
+    return;
+  }
+
+  var input = document.createElement("input");
+  input.id = "searchyc";
+  input.size = 30;
+  input.type = "text";
+  input.placeholder = "Search with hnsearch.com";
+  input.style.border = "0";
+  input.style.padding = "0";
+
+  var button = document.createElement("button");
+  button.id = "searchyc-button";
+  button.textContent = "Search";
+  button.style.border = "0";
+  button.style.padding = "0";
+
+  firstSpan.append("  ", input, button);
+
+  function doSearch() {
+    window.location = "//hn.algolia.com/?q=" + encodeURIComponent(input.value);
+  }
+
+  button.addEventListener("click", doSearch);
+  input.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
+      doSearch();
+    }
+  });
+}
+
+// Add the Sort button and the "Auto" keep-sorted checkbox.
+function setupSorter() {
+  var sorter = document.createElement("div");
+  sorter.id = "sorter";
+  sorter.style.cssText =
+    "position:absolute;float:left;color:#000;font-size:85%;";
+  sorter.innerHTML =
+    '<button id="sort_btn">Sort</button><br />' +
+    '<span style="vertical-align:middle;"><input type="checkbox" id="keep_sorted"></span>Auto';
+  document.body.prepend(sorter);
+
+  var keepSorted = document.getElementById("keep_sorted");
+  var sortBtn = document.getElementById("sort_btn");
+
+  keepSorted.addEventListener("click", function () {
+    if (keepSorted.checked) {
       localStorage.keep_sorted = 1;
       sort_entries();
     } else {
@@ -86,10 +124,21 @@ $(function(){
     }
   });
 
-  $("#sort_btn").on('click', sort_entries);
+  sortBtn.addEventListener("click", sort_entries);
 
   if (localStorage.keep_sorted == 1) {
-    $("#keep_sorted").attr("checked", "checked");
+    keepSorted.checked = true;
     sort_entries();
   }
-})
+}
+
+function init() {
+  setupSearch();
+  setupSorter();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
