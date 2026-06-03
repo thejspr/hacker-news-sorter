@@ -39,21 +39,14 @@ function sort_entries() {
   var anchor = lastRow.nextElementSibling;
   var parent = groups[0].rows[0].parentNode;
 
-  // Stable sort by score descending (explicit index tie-break keeps page order).
-  var sorted = groups
-    .map(function (g, i) {
-      return { g: g, i: i };
-    })
-    .sort(function (a, b) {
-      return b.g.score - a.g.score || a.i - b.i;
-    })
-    .map(function (x) {
-      return x.g;
-    });
+  // Array.prototype.sort is stable (ES2019+), so equal scores keep page order.
+  groups.sort(function (a, b) {
+    return b.score - a.score;
+  });
 
   // Move the rows into a fragment in sorted order, then re-insert in one operation.
   var fragment = document.createDocumentFragment();
-  sorted.forEach(function (g) {
+  groups.forEach(function (g) {
     g.rows.forEach(function (row) {
       fragment.appendChild(row);
     });

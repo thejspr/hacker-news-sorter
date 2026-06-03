@@ -9,15 +9,13 @@
   function linkifyTextNode(node) {
     var text = node.nodeValue;
     URL_RE.lastIndex = 0;
-    if (!URL_RE.test(text)) {
-      return;
-    }
-    URL_RE.lastIndex = 0;
 
     var fragment = document.createDocumentFragment();
     var lastIndex = 0;
+    var matched_any = false;
     var match;
     while ((match = URL_RE.exec(text)) !== null) {
+      matched_any = true;
       var full = match[0];
       var start = match.index;
 
@@ -48,6 +46,10 @@
       }
 
       lastIndex = start + full.length;
+    }
+
+    if (!matched_any) {
+      return;
     }
 
     if (lastIndex < text.length) {
