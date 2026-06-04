@@ -6,19 +6,24 @@
 function collectPosts() {
   var groups = [];
   document.querySelectorAll(".athing").forEach(function (athing) {
-    var rows = [athing];
-    var score = 0;
+    // A sortable story is followed by a row containing td.subtext (its score /
+    // comments line). Comment rows (.athing.comtr) and other .athing elements have
+    // no such sibling, so they're skipped — otherwise they'd be torn out of their
+    // own table and reordered (e.g. on comment, /threads and /newcomments pages).
     var subtext = athing.nextElementSibling;
-    if (subtext && subtext.querySelector("td.subtext")) {
-      rows.push(subtext);
-      var scoreEl = subtext.querySelector(".score");
-      if (scoreEl) {
-        score = parseInt(scoreEl.textContent.trim(), 10) || 0;
-      }
-      var spacer = subtext.nextElementSibling;
-      if (spacer && spacer.classList.contains("spacer")) {
-        rows.push(spacer);
-      }
+    if (!subtext || !subtext.querySelector("td.subtext")) {
+      return;
+    }
+
+    var rows = [athing, subtext];
+    var score = 0;
+    var scoreEl = subtext.querySelector(".score");
+    if (scoreEl) {
+      score = parseInt(scoreEl.textContent.trim(), 10) || 0;
+    }
+    var spacer = subtext.nextElementSibling;
+    if (spacer && spacer.classList.contains("spacer")) {
+      rows.push(spacer);
     }
     groups.push({ rows: rows, score: score });
   });
@@ -28,8 +33,8 @@ function collectPosts() {
 // Sort posts by points (descending) with a single DOM write.
 function sort_entries() {
   var groups = collectPosts();
-  if (groups.length === 0) {
-    return;
+  if (groups.length < 2) {
+    return; // nothing to sort (e.g. the lone story on a comment page)
   }
 
   // Anchor: the first trailing row (the "More" / morespace row) that is not part of
